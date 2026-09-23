@@ -35,17 +35,12 @@ jobs:
           mkdir -p dist
           touch dist/index.html
           npx cap sync android || (npx cap add android && npx cap sync android)
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
 
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
-          JAVA_HOME: /usr/lib/jvm/zulu21-ca-amd64
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
