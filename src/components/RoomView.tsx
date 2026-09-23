@@ -29,7 +29,8 @@ import {
   Camera,
   CameraOff,
   Monitor,
-  MonitorOff
+  MonitorOff,
+  Heart
 } from 'lucide-react';
 import { Room, Message, Member } from '../types';
 import VideoPlayer from './VideoPlayer';
