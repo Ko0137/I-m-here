@@ -19,7 +19,7 @@ jobs:
           node-version: 22
 
       - name: Install Dependencies
-        run: npm install --no-package-lock
+        run: npm install --no-package-lock --legacy-peer-deps
 
       - name: Build Web App
         run: npm run build

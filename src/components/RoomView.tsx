@@ -173,25 +173,31 @@ export default function RoomView({ roomId, user, onLeave }: RoomViewProps) {
         const container = document.getElementById('screen-container');
         if (container && !document.getElementById('screen-video')) container.appendChild(video);
       } else if (remoteStream.getVideoTracks().length > 0) {
-        const video = document.getElementById(`video-${call.peer}`) as HTMLVideoElement || document.createElement('video');
+        let video = document.getElementById(`video-${call.peer}`) as HTMLVideoElement;
+        const isNew = !video;
+        if (isNew) {
+          video = document.createElement('video');
+          video.id = `video-${call.peer}`;
+          video.autoplay = true;
+          video.playsInline = true;
+        }
         video.srcObject = remoteStream;
-        video.autoplay = true;
-        video.playsInline = true;
-        video.id = `video-${call.peer}`;
         
         if (currentRoom?.screenSharerId === call.peer) {
           video.className = "w-32 h-32 md:w-48 md:h-48 rounded-2xl object-cover border-4 border-rose-600 shadow-2xl absolute bottom-4 right-4 z-50";
-          document.getElementById('screen-container')?.appendChild(video);
+          if (isNew) document.getElementById('screen-container')?.appendChild(video);
         } else {
           video.className = "w-24 h-24 rounded-lg object-cover border-2 border-rose-500 shadow-lg";
-          remoteVideosRef.current?.appendChild(video);
+          if (isNew) remoteVideosRef.current?.appendChild(video);
         }
       } else {
-        const audio = document.createElement('audio');
-        audio.srcObject = remoteStream;
-        audio.play();
-        audio.id = `audio-${call.peer}`;
-        remoteAudiosRef.current?.appendChild(audio);
+        if (!document.getElementById(`audio-${call.peer}`)) {
+          const audio = document.createElement('audio');
+          audio.srcObject = remoteStream;
+          audio.autoplay = true;
+          audio.id = `audio-${call.peer}`;
+          remoteAudiosRef.current?.appendChild(audio);
+        }
       }
     });
     call.on('close', () => {
@@ -359,6 +365,23 @@ export default function RoomView({ roomId, user, onLeave }: RoomViewProps) {
               <h2 className="text-lg font-bold text-white truncate max-w-[200px]">{room.name}</h2>
             </div>
             <div className="flex items-center gap-2">
+              <div className="flex -space-x-2 mr-2">
+                {members.map((m, i) => (
+                  <div 
+                    key={m.id} 
+                    className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center overflow-hidden"
+                    title={m.name}
+                    style={{ zIndex: members.length - i }}
+                  >
+                    <div className={cn(
+                      "w-full h-full flex items-center justify-center text-[10px] font-bold text-white uppercase",
+                      m.isOnline ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-700 text-slate-400"
+                    )}>
+                      {m.name?.charAt(0) || '?'}
+                    </div>
+                  </div>
+                ))}
+              </div>
               <button 
                 onClick={toggleScreenShare}
                 className={cn(
