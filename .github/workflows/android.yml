@@ -34,8 +34,9 @@ jobs:
         run: |
           mkdir -p dist
           touch dist/index.html
-          npx cap add android || echo "Android already added"
-          npx cap sync android
+          npx cap sync android || (npx cap add android && npx cap sync android)
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
 
       - name: Build APK
         run: |

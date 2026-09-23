@@ -1,6 +1,4 @@
-import { CapacitorConfig } from '@capacitor/cli';
-
-const config: CapacitorConfig = {
+const config = {
   appId: 'com.cinesync.mobile',
   appName: 'CineSync',
   webDir: 'dist',
