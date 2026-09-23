@@ -421,6 +421,25 @@ export default function RoomView({ roomId, user, onLeave }: RoomViewProps) {
               <button onClick={copyInvite} className="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300">
                 {copied ? <Check className="w-5 h-5 text-emerald-400" /> : <Copy className="w-5 h-5" />}
               </button>
+              <button 
+                onClick={async () => {
+                  try {
+                    await addDoc(collection(db, 'rooms', roomId, 'messages'), {
+                      roomId,
+                      userId: user.uid,
+                      userName: user.displayName,
+                      text: 'Прикосновение...',
+                      type: 'vibration',
+                      createdAt: serverTimestamp()
+                    });
+                    toast('Вы коснулись плеча!', { icon: '📳' });
+                  } catch (e) {}
+                }}
+                className="p-3 bg-rose-600/20 hover:bg-rose-600/30 rounded-xl text-rose-500 transition-all border border-rose-500/30"
+                title="Постучать по плечу"
+              >
+                <Heart className="w-5 h-5 fill-current" />
+              </button>
             </div>
           </div>
 
