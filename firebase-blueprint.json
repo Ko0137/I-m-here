@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "Room": {
+      "title": "Room",
+      "description": "A shared cinema room",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 50 },
+        "videoUrl": { "type": "string", "maxLength": 500 },
+        "isPlaying": { "type": "boolean" },
+        "currentTime": { "type": "number" },
+        "password": { "type": "string", "maxLength": 20 },
+        "isPrivate": { "type": "boolean" },
+        "lastUpdatedBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "videoUrl", "isPlaying", "currentTime", "isPrivate"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A message or reaction in a room",
+      "type": "object",
+      "properties": {
+        "roomId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userName": { "type": "string", "maxLength": 50 },
+        "text": { "type": "string", "maxLength": 1000 },
+        "type": { "type": "string", "enum": ["chat", "emoji", "vibration"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["roomId", "userId", "userName", "text", "type"]
+    },
+    "Member": {
+      "title": "Member",
+      "description": "A user in a room",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 50 },
+        "peerId": { "type": "string", "maxLength": 128 },
+        "isOnline": { "type": "boolean" },
+        "lastSeen": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "isOnline"]
+    }
+  },
+  "firestore": {
+    "/rooms/{roomId}": {
+      "schema": "Room",
+      "description": "Active cinema rooms"
+    },
+    "/rooms/{roomId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Messages and reactions within a room"
+    },
+    "/rooms/{roomId}/members/{userId}": {
+      "schema": "Member",
+      "description": "Presence and peer info for room members"
+    }
+  }
+}

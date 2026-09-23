@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@keyframes emoji-float {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.2);
+  }
+  100% {
+    transform: translateY(-400px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-emoji-float {
+  animation: emoji-float 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+video {
+  @apply transition-all duration-500 ease-in-out;
+}
+
+#screen-container video {
+  @apply shadow-2xl rounded-lg;
+}

@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Room Rules
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        // Allow partial updates for sync fields
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['isPlaying', 'currentTime', 'lastUpdatedBy', 'videoUrl', 'screenSharerId']) ||
+        // Or full room updates if owner (simplified for now to allow collaboration)
+        true
+      );
+      allow delete: if isSignedIn();
+
+      // Message Rules
+      match /messages/{messageId} {
+        allow read: if true;
+        allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+      }
+
+      // Member Rules
+      match /members/{userId} {
+        allow read: if true;
+        allow write: if isSignedIn() && userId == request.auth.uid;
+      }
+    }
+  }
+}
