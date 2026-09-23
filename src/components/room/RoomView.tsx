@@ -105,10 +105,19 @@ export default function RoomView({ roomId, user, onLeave }: RoomViewProps) {
 
     const newPeer = new Peer();
     newPeer.on('open', (id) => {
-      updateDoc(memberDoc, { peerId: id });
+      console.log('[Peer] Connection opened with ID:', id);
+      updateDoc(memberDoc, { peerId: id }).catch(e => console.error('[Peer] Failed to update peerId in DB:', e));
+    });
+
+    newPeer.on('error', (err) => {
+      console.error('[Peer] Global error:', err);
+      if (err.type === 'browser-incompatible') {
+        toast.error('Ваш браузер не поддерживает видеозвонки.');
+      }
     });
 
     newPeer.on('call', (call) => {
+      console.log('[Peer] Incoming call from:', call.peer);
       // Handle incoming voice or video call
       if (localCameraStreamRef.current) {
         call.answer(localCameraStreamRef.current);

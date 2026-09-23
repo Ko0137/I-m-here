@@ -22,6 +22,11 @@ service cloud.firestore {
       return resource.data;
     }
 
+    // Connection test rule
+    match /test/connection {
+      allow read: if true;
+    }
+
     // Room Rules
     match /rooms/{roomId} {
       allow read: if true;

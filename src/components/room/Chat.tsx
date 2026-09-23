@@ -27,23 +27,35 @@ export default function Chat({ roomId, user }: ChatProps) {
       limit(50)
     );
 
+    let isInitial = true;
     return onSnapshot(q, (snapshot) => {
       const msgs = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Message[];
-      setMessages(msgs.reverse());
+      
+      const orderedMsgs = [...msgs].reverse();
+      setMessages(orderedMsgs);
 
-      // Check for vibrations
-      const lastMsg = msgs[msgs.length - 1];
-      if (lastMsg && lastMsg.type === 'vibration' && lastMsg.userId !== user.uid) {
-        if ('vibrate' in navigator) {
-          navigator.vibrate([200, 100, 200]);
-          toast('Получена вибрация!', { icon: '📳' });
-        }
+      // Check for new vibrations only (after initial load)
+      if (!isInitial) {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            const msg = { id: change.doc.id, ...change.doc.data() } as Message;
+            if (msg.type === 'vibration' && msg.userId !== user.uid) {
+              if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200]);
+                toast('Вас коснулись...', { icon: '📳' });
+              }
+            }
+          }
+        });
       }
       
+      isInitial = false;
+      
       // Handle Emoji reactions (float them)
+      const lastMsg = orderedMsgs[orderedMsgs.length - 1];
       if (lastMsg && lastMsg.type === 'emoji') {
         const overlay = document.getElementById('reactions-overlay');
         if (overlay) {

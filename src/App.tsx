@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { auth, db } from './lib/firebase';
+import { auth, db, checkConnectivity } from './lib/firebase';
 import { 
   signInAnonymously,
   onAuthStateChanged, 
@@ -62,41 +62,73 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('[Auth] Initializing auth listener...');
     const unsubscribe = onAuthStateChanged(auth, (u) => {
+      console.log('[Auth] State changed:', u?.uid ? `Logged in (${u.uid})` : 'Not logged in');
       setUser(u);
       setIsLoading(false);
+    }, (error) => {
+      console.error('[Auth] Listener error:', error);
+      setIsLoading(false);
     });
-    return () => unsubscribe();
+    
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.warn('[Auth] Auth state check timed out. Forcing loading to false.');
+        setIsLoading(false);
+      }
+    }, 8000);
+
+    return () => {
+      unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const handleLogin = async (nickname: string) => {
-    console.log('[Auth] Start login process for:', nickname);
-    const loginToast = toast.loading('Входим в CineSync...');
+    console.log('[Auth] Starting handleLogin for:', nickname);
+    const loginToast = toast.loading('Инициализация...');
+    
     try {
-      console.log('[Auth] Calling signInAnonymously...');
-      const result = await signInAnonymously(auth);
-      console.log('[Auth] Signed in as:', result.user.uid);
+      // Step 1: Check connectivity
+      toast.loading('Проверка соединения...', { id: loginToast });
+      const connection = await checkConnectivity();
+      if (!connection.success) {
+        throw new Error(`Нет связи с сервером: ${connection.error}`);
+      }
+
+      // Step 2: Sign in
+      toast.loading('Вход в систему...', { id: loginToast });
+      const loginPromise = signInAnonymously(auth);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Время ожидания входа истекло. Проверьте интернет.')), 20000)
+      );
+
+      const result = (await Promise.race([loginPromise, timeoutPromise])) as any;
+      console.log('[Auth] signInAnonymously success:', result.user.uid);
       
-      console.log('[Auth] Updating profile...');
+      // Step 3: Update profile
+      toast.loading('Создание профиля...', { id: loginToast });
       await updateProfile(result.user, {
         displayName: nickname
       });
-      console.log('[Auth] Profile updated.');
+      console.log('[Auth] Profile updated successfully');
 
-      console.log('[Auth] Setting user state...');
       setUser({
         ...result.user,
         displayName: nickname
       });
       
-      toast.success(`Добро пожаловать, ${nickname}!`, { id: loginToast });
+      toast.success(`С возвращением, ${nickname}!`, { id: loginToast });
     } catch (error: any) {
-      console.error('[Auth] Error during login:', error);
-      toast.error(`Ошибка входа: ${error.message || 'Проверьте соединение'}`, { id: loginToast });
+      console.error('[Auth] handleLogin error:', error);
+      const errorMessage = error.message || 'Неизвестная ошибка';
+      toast.error(`Ошибка: ${errorMessage}`, { id: loginToast, duration: 6000 });
       
       if (error.code === 'auth/operation-not-allowed') {
-        console.error('[Auth] Anonymous Auth is NOT enabled in Firebase Console!');
-        toast.error('Анонимный вход отключен. Включите его в консоли Firebase (Authentication > Sign-in method).', { duration: 10000 });
+        toast.error('Анонимный вход не включен в консоли Firebase.', { duration: 10000 });
+      } else if (error.message && error.message.includes('network')) {
+        toast.error('Проблема с сетью. Проверьте Wi-Fi или мобильные данные.', { duration: 10000 });
       }
     }
   };
