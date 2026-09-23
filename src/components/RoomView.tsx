@@ -97,6 +97,11 @@ export default function RoomView({ roomId, user, onLeave }: RoomViewProps) {
       lastSeen: serverTimestamp()
     }, { merge: true });
 
+    // Heartbeat to keep presence alive
+    const heartbeat = setInterval(() => {
+      updateDoc(memberDoc, { lastSeen: serverTimestamp() }).catch(() => {});
+    }, 30000); // Every 30 seconds
+
     const newPeer = new Peer();
     newPeer.on('open', (id) => {
       updateDoc(memberDoc, { peerId: id });
@@ -122,6 +127,7 @@ export default function RoomView({ roomId, user, onLeave }: RoomViewProps) {
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
+      clearInterval(heartbeat);
       unsubRoom();
       unsubMembers();
       handleBeforeUnload();

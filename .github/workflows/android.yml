@@ -24,9 +24,6 @@ jobs:
       - name: Build Web App
         run: npm run build
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -45,6 +42,8 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
