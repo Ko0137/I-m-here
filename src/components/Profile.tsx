@@ -18,16 +18,14 @@ export default function Profile({ user }: ProfileProps) {
         <div className="px-8 pb-8">
           <div className="relative flex justify-between items-end -translate-y-12">
             <div className="flex items-end gap-6">
-              <img 
-                src={user.photoURL || ''} 
-                alt={user.displayName || ''} 
-                className="w-32 h-32 rounded-3xl border-4 border-slate-900 bg-slate-800 shadow-xl"
-              />
+              <div className="w-32 h-32 rounded-3xl border-4 border-slate-900 bg-rose-600 flex items-center justify-center text-4xl font-black text-white shadow-xl uppercase">
+                {user.displayName?.charAt(0) || '?'}
+              </div>
               <div className="pb-2">
                 <h2 className="text-3xl font-black text-white">{user.displayName}</h2>
                 <p className="text-slate-400 flex items-center gap-1.5 mt-1">
-                  <Mail className="w-4 h-4" />
-                  {user.email}
+                  <User className="w-4 h-4" />
+                  Гостевой аккаунт
                 </p>
               </div>
             </div>

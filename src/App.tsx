@@ -6,9 +6,9 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from './lib/firebase';
 import { 
-  signInWithPopup, 
-  GoogleAuthProvider, 
+  signInAnonymously,
   onAuthStateChanged, 
+  updateProfile,
   User as FirebaseUser 
 } from 'firebase/auth';
 import { 
@@ -69,10 +69,13 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  const handleLogin = async () => {
+  const handleLogin = async (nickname: string) => {
     try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInAnonymously(auth);
+      await updateProfile(result.user, {
+        displayName: nickname
+      });
+      setUser({ ...result.user, displayName: nickname });
     } catch (error) {
       console.error(error);
       toast.error('Не удалось войти');
@@ -127,11 +130,9 @@ export default function App() {
                 : "bg-slate-800/50 border-slate-700/50 text-slate-300 hover:border-slate-600"
             )}
           >
-            <img 
-              src={user.photoURL || ''} 
-              alt={user.displayName || ''} 
-              className="w-6 h-6 rounded-full border border-slate-600"
-            />
+            <div className="w-6 h-6 rounded-full bg-rose-500 flex items-center justify-center text-[10px] font-bold text-white uppercase">
+              {user.displayName?.charAt(0) || '?'}
+            </div>
             <span className="hidden md:inline text-sm font-medium">{user.displayName}</span>
           </div>
           <button 
