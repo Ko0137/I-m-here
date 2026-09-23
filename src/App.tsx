@@ -47,13 +47,13 @@ import { cn } from './lib/utils';
 import { Room, Message, Member } from './types';
 
 // Components
-import VideoPlayer from './components/VideoPlayer';
-import Chat from './components/Chat';
-import RoomList from './components/RoomList';
-import Landing from './components/Landing';
-import RoomView from './components/RoomView';
-import Profile from './components/Profile';
-import { PWAInstallButton } from './components/PWAInstallButton';
+import VideoPlayer from './components/room/VideoPlayer';
+import Chat from './components/room/Chat';
+import RoomList from './components/room/RoomList';
+import Landing from './components/auth/Landing';
+import RoomView from './components/room/RoomView';
+import Profile from './components/profile/Profile';
+import { PWAInstallButton } from './components/ui/PWAInstallButton';
 
 export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -70,15 +70,34 @@ export default function App() {
   }, []);
 
   const handleLogin = async (nickname: string) => {
+    console.log('[Auth] Start login process for:', nickname);
+    const loginToast = toast.loading('Входим в CineSync...');
     try {
+      console.log('[Auth] Calling signInAnonymously...');
       const result = await signInAnonymously(auth);
+      console.log('[Auth] Signed in as:', result.user.uid);
+      
+      console.log('[Auth] Updating profile...');
       await updateProfile(result.user, {
         displayName: nickname
       });
-      setUser({ ...result.user, displayName: nickname });
-    } catch (error) {
-      console.error(error);
-      toast.error('Не удалось войти');
+      console.log('[Auth] Profile updated.');
+
+      console.log('[Auth] Setting user state...');
+      setUser({
+        ...result.user,
+        displayName: nickname
+      });
+      
+      toast.success(`Добро пожаловать, ${nickname}!`, { id: loginToast });
+    } catch (error: any) {
+      console.error('[Auth] Error during login:', error);
+      toast.error(`Ошибка входа: ${error.message || 'Проверьте соединение'}`, { id: loginToast });
+      
+      if (error.code === 'auth/operation-not-allowed') {
+        console.error('[Auth] Anonymous Auth is NOT enabled in Firebase Console!');
+        toast.error('Анонимный вход отключен. Включите его в консоли Firebase (Authentication > Sign-in method).', { duration: 10000 });
+      }
     }
   };
 

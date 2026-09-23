@@ -7,11 +7,17 @@ interface LandingProps {
 
 export default function Landing({ onLogin }: LandingProps) {
   const [nickname, setNickname] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (nickname.trim()) {
-      onLogin(nickname.trim());
+    if (nickname.trim() && !isSubmitting) {
+      setIsSubmitting(true);
+      try {
+        await onLogin(nickname.trim());
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -52,9 +58,17 @@ export default function Landing({ onLogin }: LandingProps) {
           />
           <button 
             type="submit"
-            className="px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold text-lg shadow-xl shadow-rose-900/20 transition-all hover:scale-105 active:scale-95"
+            disabled={isSubmitting}
+            className="px-8 py-4 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-xl font-bold text-lg shadow-xl shadow-rose-900/20 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
           >
-            Начать просмотр
+            {isSubmitting ? (
+              <>
+                <div className="w-5 h-5 border-2 border-slate-500 border-t-white animate-spin rounded-full"></div>
+                Входим...
+              </>
+            ) : (
+              'Начать просмотр'
+            )}
           </button>
         </form>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { db } from '../lib/firebase';
+import { db } from '../../lib/firebase';
 import { 
   doc, 
   onSnapshot, 
@@ -32,12 +32,12 @@ import {
   MonitorOff,
   Heart
 } from 'lucide-react';
-import { Room, Message, Member } from '../types';
+import { Room, Message, Member } from '../../types';
 import VideoPlayer from './VideoPlayer';
 import Chat from './Chat';
 import { toast } from 'react-hot-toast';
 import Peer from 'peerjs';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 interface RoomViewProps {
   roomId: string;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../lib/firebase';
+import { db } from '../../lib/firebase';
 import { 
   collection, 
   query, 
@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { User as FirebaseUser } from 'firebase/auth';
 import { Plus, Search, Film, Users as UsersIcon, Lock, Unlock, Trash2 } from 'lucide-react';
-import { Room } from '../types';
+import { Room } from '../../types';
 import { toast } from 'react-hot-toast';
 
 interface RoomListProps {

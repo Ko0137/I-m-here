@@ -1,8 +1,8 @@
 import React from 'react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { LogOut, User, Mail, Calendar, ShieldCheck, Settings, Download } from 'lucide-react';
-import { auth } from '../lib/firebase';
-import { PWAInstallButton } from './PWAInstallButton';
+import { auth } from '../../lib/firebase';
+import { PWAInstallButton } from '../ui/PWAInstallButton';
 
 interface ProfileProps {
   user: FirebaseUser;

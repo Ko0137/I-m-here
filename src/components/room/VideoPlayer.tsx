@@ -10,10 +10,10 @@ import {
   Vibrate,
   Search
 } from 'lucide-react';
-import { Room, Message } from '../types';
+import { Room, Message } from '../../types';
 import { User as FirebaseUser } from 'firebase/auth';
-import { cn } from '../lib/utils';
-import { db } from '../lib/firebase';
+import { cn } from '../../lib/utils';
+import { db } from '../../lib/firebase';
 import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface VideoPlayerProps {
