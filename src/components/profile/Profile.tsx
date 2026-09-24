@@ -1,11 +1,11 @@
 import React from 'react';
-import { User as FirebaseUser } from 'firebase/auth';
 import { LogOut, User, Mail, Calendar, ShieldCheck, Settings, Download } from 'lucide-react';
 import { auth } from '../../lib/firebase';
 import { PWAInstallButton } from '../ui/PWAInstallButton';
+import { CineUser } from '../../types';
 
 interface ProfileProps {
-  user: FirebaseUser;
+  user: CineUser;
 }
 
 export default function Profile({ user }: ProfileProps) {
@@ -56,11 +56,11 @@ export default function Profile({ user }: ProfileProps) {
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-slate-900">
                   <span className="text-slate-500 text-sm">Дата регистрации</span>
-                  <span className="text-white text-sm">{user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('ru-RU') : 'Неизвестно'}</span>
+                  <span className="text-white text-sm">{user.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('ru-RU') : 'Сегодня'}</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
                   <span className="text-slate-500 text-sm">Последний вход</span>
-                  <span className="text-white text-sm">{user.metadata.lastSignInTime ? new Date(user.metadata.lastSignInTime).toLocaleDateString('ru-RU') : 'Неизвестно'}</span>
+                  <span className="text-white text-sm">{user.metadata?.lastSignInTime ? new Date(user.metadata.lastSignInTime).toLocaleDateString('ru-RU') : 'Сейчас'}</span>
                 </div>
               </div>
             </div>

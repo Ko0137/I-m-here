@@ -29,3 +29,12 @@ export interface Member {
   showCamera?: boolean;
   cameraStreamId?: string;
 }
+
+export interface CineUser {
+  uid: string;
+  displayName: string | null;
+  metadata?: {
+    creationTime?: string;
+    lastSignInTime?: string;
+  };
+}

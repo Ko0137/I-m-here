@@ -13,7 +13,6 @@ import {
   setDoc,
   deleteDoc
 } from 'firebase/firestore';
-import { User as FirebaseUser } from 'firebase/auth';
 import { 
   X, 
   Users, 
@@ -21,18 +20,18 @@ import {
   Vibrate, 
   Copy, 
   Check, 
-  Phone,
-  PhoneOff,
-  Globe,
-  ArrowRight,
-  Search,
-  Camera,
-  CameraOff,
-  Monitor,
-  MonitorOff,
-  Heart
+  Phone, 
+  PhoneOff, 
+  Globe, 
+  ArrowRight, 
+  Search, 
+  Camera, 
+  CameraOff, 
+  Monitor, 
+  MonitorOff, 
+  Heart 
 } from 'lucide-react';
-import { Room, Message, Member } from '../../types';
+import { Room, Message, Member, CineUser } from '../../types';
 import VideoPlayer from './VideoPlayer';
 import Chat from './Chat';
 import { toast } from 'react-hot-toast';
@@ -41,7 +40,7 @@ import { cn } from '../../lib/utils';
 
 interface RoomViewProps {
   roomId: string;
-  user: FirebaseUser;
+  user: CineUser;
   onLeave: () => void;
 }
 

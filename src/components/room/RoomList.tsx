@@ -10,14 +10,13 @@ import {
   deleteDoc,
   doc
 } from 'firebase/firestore';
-import { User as FirebaseUser } from 'firebase/auth';
 import { Plus, Search, Film, Users as UsersIcon, Lock, Unlock, Trash2 } from 'lucide-react';
-import { Room } from '../../types';
+import { Room, CineUser } from '../../types';
 import { toast } from 'react-hot-toast';
 
 interface RoomListProps {
   onJoinRoom: (roomId: string) => void;
-  user: FirebaseUser;
+  user: CineUser;
 }
 
 export default function RoomList({ onJoinRoom, user }: RoomListProps) {

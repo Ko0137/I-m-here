@@ -10,15 +10,14 @@ import {
   Vibrate,
   Search
 } from 'lucide-react';
-import { Room, Message } from '../../types';
-import { User as FirebaseUser } from 'firebase/auth';
+import { Room, Message, CineUser } from '../../types';
 import { cn } from '../../lib/utils';
 import { db } from '../../lib/firebase';
 import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface VideoPlayerProps {
   room: Room;
-  user: FirebaseUser;
+  user: CineUser;
   onSync: (playback: { isPlaying: boolean; currentTime: number }) => void;
 }
 

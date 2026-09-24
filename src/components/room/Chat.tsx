@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../../lib/firebase';
 import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
-import { User as FirebaseUser } from 'firebase/auth';
 import { Send, Smile, Heart, ThumbsUp, Laugh, Angry } from 'lucide-react';
-import { Message } from '../../types';
+import { Message, CineUser } from '../../types';
 import { cn } from '../../lib/utils';
 import { toast } from 'react-hot-toast';
 
 interface ChatProps {
   roomId: string;
-  user: FirebaseUser;
+  user: CineUser;
 }
 
 const EMOJIS = ['❤️', '🔥', '😂', '😮', '😢', '👍', '🎬', '🍿'];
